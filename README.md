@@ -2,6 +2,12 @@
 
 中文响应式静态课程网站。目录沿用《大模型推理体系》的 8 篇 24 章规划，只有前三章有正文，第 4–24 章仅为待学习页面。
 
+## 在线阅读
+
+[打开公网课程网站](https://pm-tinkerer.github.io/llm-inference-notes/)
+
+已发布到 GitHub Pages，来源为 main 分支根目录；后续提交会自动更新网站。
+
 ## 直接阅读
 
 双击 `index.html`，或在项目目录运行：
@@ -20,7 +26,7 @@ python3 -m http.server 8000
 4. Source 选 **Deploy from a branch**，分支选 `main`，目录选 `/(root)`，保存。
 5. 等待 GitHub 的 Pages 部署完成，在 Pages 设置页点击站点地址。项目站通常为 `https://你的用户名.github.io/仓库名/`。
 
-所有资源和页面链接均使用相对路径，支持 GitHub Pages 仓库子路径。已包含 `.nojekyll`。具体菜单以 GitHub 当前界面为准，参考 [官方发布来源说明](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site)。此交付未创建远程仓库或执行线上发布。
+所有资源和页面链接均使用相对路径，支持 GitHub Pages 仓库子路径。已包含 `.nojekyll`。具体菜单以 GitHub 当前界面为准，参考 [官方发布来源说明](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site)。本项目已发布至上述公网地址。
 
 ### 可选：GitHub Actions 自动部署
 
