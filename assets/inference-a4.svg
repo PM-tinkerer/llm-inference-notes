@@ -1,0 +1,154 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2480" height="3508" viewBox="0 0 2480 3508">
+  <defs>
+    <style>
+      .bg{fill:#f5f8fc}.card{fill:#fff;stroke:#d8e2f0;stroke-width:3}.navy{fill:#102a43}.muted{fill:#52677f}.blue{fill:#1e6de5}.sky{fill:#eaf3ff}.purple{fill:#7048e8}.lav{fill:#f1edff}.green{fill:#15803d}.mint{fill:#eaf9f0}.orange{fill:#c2410c}.peach{fill:#fff1e7}.red{fill:#c92a2a}.pink{fill:#fff0f1}.line{stroke:#9bb4d1;stroke-width:5;fill:none;marker-end:url(#arrow)}.dash{stroke:#91a7c3;stroke-width:4;stroke-dasharray:12 10;fill:none}.title{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;font-weight:800;fill:#102a43}.body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;fill:#29445f}.small{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;fill:#52677f}.mono{font-family:Menlo,Consolas,monospace;fill:#29445f}.chip{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;font-weight:700}.num{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;font-weight:800;fill:#fff}
+    </style>
+    <marker id="arrow" markerWidth="13" markerHeight="13" refX="10" refY="6.5" orient="auto"><path d="M0,0 L13,6.5 L0,13 Z" fill="#9bb4d1"/></marker>
+    <linearGradient id="head" x1="0" x2="1"><stop stop-color="#102a43"/><stop offset="1" stop-color="#1e5bb8"/></linearGradient>
+  </defs>
+
+  <rect class="bg" width="2480" height="3508"/>
+  <rect x="86" y="72" width="2308" height="292" rx="34" fill="url(#head)"/>
+  <text x="168" y="182" class="title" font-size="77" style="fill:#fff">大模型一次推理全景图</text>
+  <text x="172" y="252" font-family="-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif" font-size="32" fill="#d9e9ff">从 Prompt 到第一个 Token，再到逐字生成 · Transformer / KV Cache / Prefill / Decode</text>
+  <rect x="1730" y="126" width="550" height="154" rx="22" fill="#ffffff" opacity=".12"/>
+  <text x="1772" y="184" class="title" font-size="30" style="fill:#fff">一句话总览</text>
+  <text x="1772" y="235" font-family="-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif" font-size="25" fill="#eaf3ff">先并行处理输入，再串行生成输出</text>
+
+  <!-- Legend -->
+  <rect x="86" y="400" width="2308" height="84" rx="22" class="card"/>
+  <circle cx="149" cy="442" r="15" class="blue"/><text x="179" y="452" class="small" font-size="25">主计算路径</text>
+  <circle cx="480" cy="442" r="15" class="purple"/><text x="510" y="452" class="small" font-size="25">缓存 / 状态</text>
+  <circle cx="803" cy="442" r="15" class="green"/><text x="833" y="452" class="small" font-size="25">效率优化</text>
+  <circle cx="1110" cy="442" r="15" class="orange"/><text x="1140" y="452" class="small" font-size="25">容量 / 代价</text>
+  <text x="1700" y="452" class="small" font-size="23">A4 · 适合一页复习</text>
+
+  <!-- 1 input -->
+  <text x="92" y="572" class="title" font-size="38">1. 请求进入：文字先变成 Token</text>
+  <rect x="86" y="600" width="2308" height="252" rx="30" class="card"/>
+  <circle cx="158" cy="674" r="31" class="blue"/><text x="147" y="685" class="num" font-size="29">1</text>
+  <text x="215" y="674" class="title" font-size="32">Prompt / 系统指令 / 历史对话</text>
+  <text x="215" y="716" class="small" font-size="24">例：“北京是中国的首都。”  ·  文本并不是模型直接计算的对象</text>
+  <path d="M820 686 H955" class="line"/>
+  <rect x="982" y="627" width="460" height="113" rx="18" class="sky"/><text x="1027" y="674" class="title" font-size="29">Tokenizer 分词器</text><text x="1027" y="712" class="small" font-size="22">文本 → token IDs</text>
+  <path d="M1464 686 H1595" class="line"/>
+  <rect x="1622" y="627" width="678" height="113" rx="18" fill="#edf7ff"/>
+  <text x="1660" y="674" class="mono" font-size="25">[101, 2345, 78, 905, …]</text><text x="1660" y="712" class="small" font-size="22">输入长度 = L_input tokens</text>
+  <rect x="215" y="766" width="2080" height="54" rx="13" fill="#f5f8fc"/><text x="249" y="802" class="small" font-size="22">上下文窗口（context window）限制的是：输入 Token + 已生成 Token 的总长度。</text>
+
+  <!-- Connector --> <path d="M1240 870 V928" class="line"/>
+  <!-- 2 prefill -->
+  <text x="92" y="982" class="title" font-size="38">2. Prefill：并行“读完”所有输入，建立初始 KV Cache</text>
+  <rect x="86" y="1010" width="2308" height="552" rx="30" class="card"/>
+  <rect x="126" y="1050" width="434" height="462" rx="24" class="sky"/>
+  <circle cx="171" cy="1103" r="27" class="blue"/><text x="162" y="1113" class="num" font-size="25">2</text>
+  <text x="215" y="1113" class="title" font-size="31">Embedding + 位置</text>
+  <text x="166" y="1170" class="small" font-size="23">token ID → 向量 X</text>
+  <text x="166" y="1210" class="small" font-size="23">RoPE：各层旋转 Q、K</text>
+  <text x="166" y="1250" class="small" font-size="23">得到每个 token 的</text>
+  <text x="166" y="1290" class="mono" font-size="25">hidden states [L, d]</text>
+  <rect x="166" y="1360" width="350" height="96" rx="15" fill="#d9eaff"/>
+  <text x="190" y="1401" class="chip" font-size="23" fill="#1e5bb8">并行处理 L_input 个 token</text>
+  <text x="190" y="1432" class="small" font-size="20">吞吐受算力影响大</text>
+  <path d="M580 1282 H660" class="line"/>
+
+  <!-- Transformer block -->
+  <rect x="685" y="1050" width="954" height="462" rx="24" fill="#fbfcff" stroke="#b9cbe5" stroke-width="3"/>
+  <text x="726" y="1104" class="title" font-size="32">重复 N 层 Transformer Block</text>
+  <text x="1310" y="1104" class="small" font-size="21">每层都有一份 KV Cache</text>
+  <rect x="726" y="1140" width="262" height="71" rx="15" class="sky"/><text x="757" y="1185" class="chip" font-size="24" fill="#1e5bb8">RMSNorm</text>
+  <path d="M990 1176 H1040" class="line"/>
+  <rect x="1063" y="1140" width="510" height="71" rx="15" class="lav"/><text x="1090" y="1185" class="chip" font-size="24" fill="#7048e8">Self-Attention（见下图）</text>
+  <path d="M1318 1212 V1260" class="line"/>
+  <rect x="726" y="1283" width="262" height="71" rx="15" class="sky"/><text x="757" y="1328" class="chip" font-size="24" fill="#1e5bb8">Residual Add</text>
+  <path d="M990 1319 H1040" class="line"/>
+  <rect x="1063" y="1283" width="510" height="71" rx="15" class="mint"/><text x="1090" y="1328" class="chip" font-size="24" fill="#15803d">RMSNorm → FFN / MLP</text>
+  <text x="726" y="1415" class="small" font-size="22">Attention：跨 token 混合信息；FFN：逐 token 的非线性特征变换。</text>
+  <text x="726" y="1454" class="small" font-size="22">Causal Mask：当前位置只能看自己和左侧历史，不能“偷看”未来 token。</text>
+  <path d="M1658 1282 H1740" class="line"/>
+  <rect x="1766" y="1050" width="588" height="462" rx="24" class="lav"/>
+  <text x="1806" y="1104" class="title" font-size="31" fill="#7048e8">KV Cache（初始状态）</text>
+  <text x="1806" y="1150" class="small" font-size="22">对每层、每个输入 token 存：</text>
+  <text x="1806" y="1192" class="mono" font-size="24">K₁…K_L  与  V₁…V_L</text>
+  <rect x="1806" y="1230" width="506" height="96" rx="14" fill="#fff"/>
+  <text x="1830" y="1272" class="small" font-size="22">缓存的是 Attention 的 K、V，</text><text x="1830" y="1305" class="small" font-size="22">不是完整 hidden states，也不是 Q。</text>
+  <text x="1806" y="1386" class="chip" font-size="24" fill="#7048e8">Prefill 完成：Cache 长度 = L_input</text>
+  <text x="1806" y="1427" class="small" font-size="20">长输入首 token 延迟（TTFT）主要在此阶段</text>
+  <text x="1806" y="1465" class="small" font-size="20">计算量较高，但矩阵运算高度并行</text>
+
+  <!-- 3 anatomy -->
+  <path d="M1240 1585 V1640" class="line"/>
+  <text x="92" y="1695" class="title" font-size="38">3. Attention 内部：Q 决定“找谁”，K 用来匹配，V 提供内容</text>
+  <rect x="86" y="1723" width="2308" height="422" rx="30" class="card"/>
+  <text x="139" y="1782" class="mono" font-size="30">X</text><text x="179" y="1782" class="small" font-size="23">hidden state</text>
+  <path d="M300 1774 H386" class="line"/>
+  <rect x="412" y="1740" width="360" height="72" rx="14" class="sky"/><text x="444" y="1786" class="mono" font-size="24">Q=XW_Q  (Query)</text>
+  <rect x="412" y="1843" width="360" height="72" rx="14" class="lav"/><text x="444" y="1889" class="mono" font-size="24">K=XW_K  (Key)</text>
+  <rect x="412" y="1946" width="360" height="72" rx="14" class="lav"/><text x="444" y="1992" class="mono" font-size="24">V=XW_V  (Value)</text>
+  <path d="M790 1776 H885" class="line"/><path d="M790 1879 H885" class="line"/><path d="M790 1982 H885" class="line"/>
+  <rect x="914" y="1740" width="620" height="278" rx="20" fill="#f8fbff" stroke="#b9cbe5" stroke-width="3"/>
+  <text x="952" y="1803" class="mono" font-size="28">scores = QKᵀ / √d</text>
+  <text x="952" y="1846" class="small" font-size="22">匹配：当前位置应该关注哪些历史 token？</text>
+  <text x="952" y="1905" class="mono" font-size="28">weights = Softmax(scores + mask)</text>
+  <text x="952" y="1948" class="small" font-size="22">归一化：每个位置的注意力权重之和为 1</text>
+  <text x="952" y="2006" class="mono" font-size="28">output = weights · V</text>
+  <path d="M1550 1879 H1640" class="line"/>
+  <rect x="1668" y="1740" width="646" height="278" rx="20" class="peach"/>
+  <text x="1710" y="1803" class="title" font-size="28" fill="#c2410c">为什么只缓存 K、V？</text>
+  <text x="1710" y="1855" class="small" font-size="23">下一步的新 token 只需要自己的 Q，</text>
+  <text x="1710" y="1891" class="small" font-size="23">再拿它与全部历史 K 做匹配，</text>
+  <text x="1710" y="1927" class="small" font-size="23">并用权重聚合全部历史 V。</text>
+  <text x="1710" y="1985" class="chip" font-size="23" fill="#c2410c">历史 Q 不会再被用到，因此不必缓存。</text>
+  <text x="139" y="2086" class="small" font-size="21">多头注意力（MHA）：多组 Q/K/V 并行学习不同关系；GQA/MQA：减少 KV 头数，显著降低 KV Cache 显存。</text>
+
+  <!-- 4 decode -->
+  <path d="M1240 2163 V2218" class="line"/>
+  <text x="92" y="2272" class="title" font-size="38">4. Decode：每次只处理一个新 Token，循环直到结束</text>
+  <rect x="86" y="2300" width="2308" height="590" rx="30" class="card"/>
+  <circle cx="166" cy="2361" r="29" class="blue"/><text x="155" y="2372" class="num" font-size="27">3</text>
+  <text x="218" y="2371" class="title" font-size="30">Prefill 末位 → LM Head → 采样首 Token；随后循环 Decode</text>
+  <text x="218" y="2412" class="small" font-size="22">logits 是词表上每个 token 的未归一化分数；采样选出下一个 token。</text>
+  <rect x="138" y="2460" width="434" height="296" rx="22" class="sky"/>
+  <text x="176" y="2512" class="title" font-size="29">① 选下一个 Token</text>
+  <text x="176" y="2555" class="small" font-size="22">Greedy：取最高概率</text><text x="176" y="2592" class="small" font-size="22">temperature：调节随机性</text><text x="176" y="2629" class="small" font-size="22">top-k / top-p：裁剪候选集</text>
+  <rect x="176" y="2672" width="350" height="48" rx="12" fill="#d9eaff"/><text x="197" y="2705" class="mono" font-size="20">token t = “北京”</text>
+  <path d="M590 2610 H683" class="line"/>
+  <rect x="710" y="2460" width="548" height="296" rx="22" class="lav"/>
+  <text x="749" y="2512" class="title" font-size="29" fill="#7048e8">② 只算新 Token</text>
+  <text x="749" y="2555" class="small" font-size="22">新 token 进入每层 Transformer</text><text x="749" y="2592" class="small" font-size="22">计算自己的 Q_t、K_t、V_t</text><text x="749" y="2629" class="small" font-size="22">Q_t 与历史 K₁…K_t 做 Attention</text>
+  <rect x="749" y="2672" width="470" height="48" rx="12" fill="#fff"/><text x="770" y="2705" class="small" font-size="20">不重算历史 token 的 K/V/FFN</text>
+  <path d="M1275 2610 H1368" class="line"/>
+  <rect x="1395" y="2460" width="500" height="296" rx="22" class="lav"/>
+  <text x="1433" y="2512" class="title" font-size="29" fill="#7048e8">③ 追加 Cache</text>
+  <text x="1433" y="2555" class="small" font-size="22">已处理的位置才写入 K/V</text><text x="1433" y="2592" class="small" font-size="22">Cache 长度：t − 1 → t</text>
+  <text x="1433" y="2655" class="mono" font-size="24">L_KV ≈ L_input + L_generated</text>
+  <path d="M1913 2610 H2005" class="line"/>
+  <rect x="2030" y="2460" width="284" height="296" rx="22" class="mint"/>
+  <text x="2060" y="2512" class="title" font-size="28" fill="#15803d">④ 继续？</text>
+  <text x="2060" y="2560" class="small" font-size="21">EOS / 停止词</text><text x="2060" y="2596" class="small" font-size="21">达到 max tokens</text>
+  <text x="2060" y="2652" class="chip" font-size="22" fill="#15803d">否 → 输出</text><text x="2060" y="2692" class="chip" font-size="22" fill="#15803d">是 → 回到 ①</text>
+  <path d="M2172 2762 C2172 2832, 493 2832, 493 2770" class="dash" marker-end="url(#arrow)"/>
+  <text x="1002" y="2836" class="small" font-size="21">逐 token 串行：小批量 Decode 常受带宽限制；瓶颈随批量和模型变化。</text>
+
+  <!-- 5 metrics -->
+  <text x="92" y="2968" class="title" font-size="38">5. 容量、时延与服务优化：这些概念如何连起来？</text>
+  <rect x="86" y="2995" width="2308" height="382" rx="30" class="card"/>
+  <rect x="126" y="3035" width="678" height="296" rx="22" class="peach"/>
+  <text x="162" y="3088" class="title" font-size="29" fill="#c2410c">KV Cache 显存</text>
+  <text x="162" y="3132" class="mono" font-size="21">≈ 2 × N_layers × L_KV</text><text x="162" y="3165" class="mono" font-size="21">× N_KV_heads × head_dim × bytes</text>
+  <text x="162" y="3214" class="small" font-size="21">增长来源：长输入 + 长输出 + 并发请求</text><text x="162" y="3249" class="small" font-size="21">降低：FP8 / 量化、GQA/MQA、滑动窗口</text><text x="162" y="3284" class="small" font-size="21">PagedAttention：用块管理，减少碎片</text>
+  <rect x="829" y="3035" width="698" height="296" rx="22" class="sky"/>
+  <text x="866" y="3088" class="title" font-size="29" fill="#1e5bb8">两个关键时延指标</text>
+  <text x="866" y="3135" class="chip" font-size="23" fill="#1e5bb8">TTFT（首 Token 时间）</text><text x="866" y="3168" class="small" font-size="21">主要受排队、Prompt 长度、Prefill 算力影响</text>
+  <text x="866" y="3223" class="chip" font-size="23" fill="#1e5bb8">TPOT（每输出 Token 时间）</text><text x="866" y="3256" class="small" font-size="21">主要受 KV 长度、显存带宽、批处理影响</text>
+  <text x="866" y="3297" class="small" font-size="19">总耗时 ≈ TTFT + (输出数 − 1) × TPOT</text>
+  <rect x="1552" y="3035" width="802" height="296" rx="22" class="mint"/>
+  <text x="1589" y="3088" class="title" font-size="29" fill="#15803d">服务端并发技术</text>
+  <text x="1589" y="3138" class="chip" font-size="22" fill="#15803d">Continuous Batching</text><text x="1866" y="3138" class="small" font-size="20">请求动态加入 / 移出批次</text>
+  <text x="1589" y="3182" class="chip" font-size="22" fill="#15803d">Prefill / Decode 分离</text><text x="1915" y="3182" class="small" font-size="20">隔离计算，增加 KV 传输</text>
+  <text x="1589" y="3226" class="chip" font-size="22" fill="#15803d">Prefix Cache</text><text x="1844" y="3226" class="small" font-size="20">复用相同前缀的 KV Cache</text>
+  <text x="1589" y="3270" class="chip" font-size="22" fill="#15803d">Speculative Decoding</text><text x="1940" y="3270" class="small" font-size="20">小模型草拟，大模型验证</text>
+
+  <rect x="86" y="3420" width="2308" height="53" rx="15" fill="#102a43"/>
+  <text x="126" y="3455" font-family="-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif" font-size="21" fill="#eaf3ff">复习口诀：Prefill 并行建缓存，Decode 串行读缓存；Q 问问题，K 做索引，V 带内容；上下文越长，KV Cache 越大。</text>
+</svg>
